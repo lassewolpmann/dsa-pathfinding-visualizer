@@ -42,8 +42,8 @@ class Maze:
 
         # Make sure that Start- and Endpoint aren't the same
         while start_point == end_point:
-            start_point = [randint(1, self.rows - 1), randint(1, self.cols - 1)]
-            end_point = [randint(1, self.rows - 1), randint(1, self.cols - 1)]
+            start_point = [randint(1, self.rows - 2), randint(1, self.cols - 2)]
+            end_point = [randint(1, self.rows - 2), randint(1, self.cols - 2)]
 
         self.start_position = (start_point[0], start_point[1])
         self.end_position = (end_point[0], end_point[1])
@@ -67,6 +67,28 @@ class Maze:
                         neighbors.append((i, j + 1))  # Right cell
                     self.graph[(i, j)] = neighbors
 
+    def bfs(self):
+        # Queue for BFS
+        queue = [(self.start_position, [self.start_position])]
+        # Enqueue the start node and mark it as visited
+        visited = {self.start_position}
+
+        while queue:
+            # Dequeue a node and its path
+            current_node, path = queue.pop(0)
+            # If the current node is the end node, return the path
+            if current_node == self.end_position:
+                return path
+            # Explore neighbors of the current node
+            for neighbor in self.graph[current_node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    # Enqueue the neighbor and update the path
+                    queue.append((neighbor, path + [neighbor]))
+
+        # If no path is found
+        return None
+
     def __str__(self):
         rows = []
         for row in self.maze:
@@ -77,3 +99,6 @@ class Maze:
 
 if __name__ == "__main__":
     maze = Maze()
+    print(maze)
+    shortest_path = maze.bfs()
+    print(shortest_path)
