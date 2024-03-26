@@ -5,12 +5,17 @@ class Maze:
     def __init__(self):
         self.rows = int(input("How many rows should the maze have?: "))
         self.cols = int(input("How many columns should the maze have?: "))
-        self.maze = self.create_maze()
+        self.maze = []
+        self.graph = {}
+        self.start_position = (0, 0)
+        self.end_position = (0, 0)
+
+        self.create_maze()
         self.place_walls()
         self.place_start_and_end_position()
+        self.create_graph()
 
     def create_maze(self):
-        m = []
         for row in range(self.rows):
             r = []
             for col in range(self.cols):
@@ -19,9 +24,7 @@ class Maze:
                 else:
                     r.append("-")
 
-            m.append(r)
-
-        return m
+            self.maze.append(r)
 
     def place_walls(self):
         for row in range(0, self.rows):
@@ -34,14 +37,35 @@ class Maze:
                         self.maze[row][col] = "#"
 
     def place_start_and_end_position(self):
-        start_row_position = randint(1, self.rows - 2)
-        start_col_position = randint(1, self.cols - 2)
+        start_point = [0, 0]
+        end_point = [0, 0]
 
-        end_row_position = randint(1, self.rows - 2)
-        end_col_position = randint(1, self.cols - 2)
+        # Make sure that Start- and Endpoint aren't the same
+        while start_point == end_point:
+            start_point = [randint(1, self.rows - 1), randint(1, self.cols - 1)]
+            end_point = [randint(1, self.rows - 1), randint(1, self.cols - 1)]
 
-        self.maze[start_row_position][start_col_position] = "S"
-        self.maze[end_row_position][end_col_position] = "E"
+        self.start_position = (start_point[0], start_point[1])
+        self.end_position = (end_point[0], end_point[1])
+
+        self.maze[start_point[0]][start_point[1]] = "S"
+        self.maze[end_point[0]][end_point[1]] = "E"
+
+    def create_graph(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                if self.maze[i][j] != '#':  # Exclude walls
+                    neighbors = []
+                    # Check adjacent cells
+                    if i > 0 and self.maze[i - 1][j] != '#':
+                        neighbors.append((i - 1, j))  # Upper cell
+                    if i < self.rows - 1 and self.maze[i + 1][j] != '#':
+                        neighbors.append((i + 1, j))  # Lower cell
+                    if j > 0 and self.maze[i][j - 1] != '#':
+                        neighbors.append((i, j - 1))  # Left cell
+                    if j < self.cols - 1 and self.maze[i][j + 1] != '#':
+                        neighbors.append((i, j + 1))  # Right cell
+                    self.graph[(i, j)] = neighbors
 
     def __str__(self):
         rows = []
