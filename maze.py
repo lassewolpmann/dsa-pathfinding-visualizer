@@ -19,6 +19,7 @@ class Maze:
             r = []
             for col in range(self.cols):
                 if row == 0 or col == 0 or row == self.rows - 1 or col == self.cols - 1:
+                    # Create outer layer of Walls
                     r.append("#")
                 else:
                     r.append("-")
@@ -35,21 +36,19 @@ class Maze:
                 char = self.maze[row][col]
                 # Skip if there is already a wall
                 if char != "#":
-                    # 25% chance of Wall
-                    if randint(1, 4) % 4 == 0:
+                    # 33% chance of Wall
+                    if randint(1, 3) % 3 == 0:
                         self.maze[row][col] = "#"
 
     def place_start_and_end_position(self):
-        start_point = [0, 0]
-        end_point = [0, 0]
-
-        # Make sure that Start- and Endpoint aren't the same
-        while start_point == end_point:
-            start_point = [randint(1, self.rows - 2), randint(1, self.cols - 2)]
-            end_point = [randint(1, self.rows - 2), randint(1, self.cols - 2)]
+        start_point = [0, randint(1, self.cols - 2)]
+        end_point = [self.rows - 1, randint(1, self.cols - 2)]
 
         self.start_position = (start_point[0], start_point[1])
         self.end_position = (end_point[0], end_point[1])
+
+        self.maze[start_point[0] + 1][start_point[1]] = "-"
+        self.maze[end_point[0] - 1][end_point[1]] = "-"
 
         self.maze[start_point[0]][start_point[1]] = "S"
         self.maze[end_point[0]][end_point[1]] = "E"

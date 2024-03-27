@@ -4,7 +4,11 @@ from maze import Maze
 class BFS:
     def __init__(self, maze: Maze):
         self.maze = maze
-        self.visited, self.path = self.find_path()
+        try:
+            self.visited, self.path = self.find_path()
+        except TypeError:
+            self.visited = None
+            self.path = None
 
     def find_path(self):
         # Queue for BFS

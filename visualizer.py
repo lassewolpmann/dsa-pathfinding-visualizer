@@ -2,9 +2,7 @@ import pygame
 from maze import Maze
 from algorithms.bfs import BFS
 
-WIDTH = 1024
-HEIGHT = 1024
-CELL_SIZE = 15
+CELL_SIZE = 10
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
 START_COLOR = (0, 255, 0)
@@ -17,11 +15,15 @@ class Visualizer:
     def __init__(self, maze: Maze):
         pygame.init()
         pygame.display.set_caption("DSA Pathfinding Visualizer")
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
+
+        width = maze.cols * CELL_SIZE + 200
+        height = maze.rows * CELL_SIZE
+
+        self.screen = pygame.display.set_mode((width, height))
         self.maze = maze
 
-        self.regen_button = Button("Regenerate Maze", (self.maze.cols + 1) * CELL_SIZE, 1 * CELL_SIZE, self.screen)
-        self.bfs_button = Button("BFS", (self.maze.cols + 1) * CELL_SIZE, 5 * CELL_SIZE, self.screen)
+        self.regen_button = Button("Regenerate Maze", (self.maze.cols + 1) * CELL_SIZE, 0, width, height, self.screen)
+        self.bfs_button = Button("BFS", (self.maze.cols + 1) * CELL_SIZE, 60, width, height, self.screen)
 
         self.initial_draw()
 
@@ -41,13 +43,9 @@ class Visualizer:
                         visited = bfs.visited
                         path = bfs.path
 
-                        self.draw_path(visited, VISITED_COLOR)
-                        self.draw_path(path, PATHFINDING_COLOR)
-
-                if event.type == pygame.VIDEORESIZE:
-                    self.screen = pygame.display.set_mode((event.w, event.h),
-                                                          pygame.RESIZABLE)
-                    self.initial_draw()
+                        if visited and path:
+                            self.draw_path(visited, VISITED_COLOR)
+                            self.draw_path(path, PATHFINDING_COLOR)
 
             pygame.display.flip()
 
@@ -86,7 +84,7 @@ class Visualizer:
 
 
 class Button:
-    def __init__(self, button_text, x, y, screen):
+    def __init__(self, button_text, x, y, width, height, screen):
         self.screen = screen
         self.x = x
         self.y = y
@@ -96,7 +94,7 @@ class Button:
         self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont("arial", 18)
         self.button_text = button_text
-        self.rect = pygame.Rect((WIDTH - self.width) // 2, (HEIGHT - self.height) // 2, self.width,
+        self.rect = pygame.Rect((width - self.width) // 2, (height - self.height) // 2, self.width,
                                 self.height)
 
     def draw(self):
