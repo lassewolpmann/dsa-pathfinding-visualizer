@@ -80,28 +80,6 @@ class Maze:
                         neighbors.append((i, j + 1))  # Right cell
                     self.graph[(i, j)] = neighbors
 
-    def bfs(self):
-        # Queue for BFS
-        queue = [(self.start_position, [self.start_position])]
-        # Enqueue the start node and mark it as visited
-        visited = {self.start_position}
-
-        while queue:
-            # Dequeue a node and its path
-            current_node, path = queue.pop(0)
-            # If the current node is the end node, return the path
-            if current_node == self.end_position:
-                return path
-            # Explore neighbors of the current node
-            for neighbor in self.graph[current_node]:
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    # Enqueue the neighbor and update the path
-                    queue.append((neighbor, path + [neighbor]))
-
-        # If no path is found
-        return None
-
     def __str__(self):
         rows = []
         for row in self.maze:
@@ -118,6 +96,8 @@ class Visualizer:
         self.maze = maze_object
 
         self.regen_button = Button("Regenerate Maze", (self.maze.rows + 1) * CELL_SIZE, 1 * CELL_SIZE, self.screen)
+        self.bfs_button = Button("BFS", (self.maze.rows + 1) * CELL_SIZE, 5 * CELL_SIZE, self.screen)
+        self.bfs_path = []
 
         running = True
         while running:
@@ -128,7 +108,10 @@ class Visualizer:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     if self.regen_button.check_collision(pos):
+                        self.bfs_path = []
                         self.maze.create_maze()
+                    elif self.bfs_button.check_collision(pos):
+                        self.bfs_path = self.bfs()
 
                 if event.type == pygame.VIDEORESIZE:
                     self.screen = pygame.display.set_mode((event.w, event.h),
@@ -137,6 +120,9 @@ class Visualizer:
             self.screen.fill(PATH_COLOR)
             self.draw_maze()
             self.regen_button.draw()
+            self.bfs_button.draw()
+            self.draw_path(self.bfs_path)
+
             pygame.display.flip()
 
         pygame.quit()
@@ -154,6 +140,31 @@ class Visualizer:
                     color = PATH_COLOR
 
                 pygame.draw.rect(self.screen, color, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+    def draw_path(self, path):
+        for pos in path:
+            if pos != self.maze.start_position and pos != self.maze.end_position:
+                pygame.draw.rect(self.screen, PATHFINDING_COLOR, (pos[0] * CELL_SIZE, pos[1] * CELL_SIZE,
+                                                                  CELL_SIZE, CELL_SIZE))
+
+    def bfs(self):
+        # Queue for BFS
+        queue = [(self.maze.start_position, [self.maze.start_position])]
+        # Enqueue the start node and mark it as visited
+        visited = {self.maze.start_position}
+
+        while queue:
+            # Dequeue a node and its path
+            current_node, path = queue.pop(0)
+            # If the current node is the end node, return the path
+            if current_node == self.maze.end_position:
+                return path
+            # Explore neighbors of the current node
+            for neighbor in self.maze.graph[current_node]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    # Enqueue the neighbor and update the path
+                    queue.append((neighbor, path + [neighbor]))
 
 
 class Button:
