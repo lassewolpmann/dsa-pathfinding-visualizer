@@ -6,6 +6,7 @@ class Maze:
         def __init__(self, pos, value):
             self.pos = pos
             self.value = value
+            self.weight = 0
             self.walls = [(0, -1), (1, 0), (0, 1), (-1, 0)]
             self.neighbors = []
 
