@@ -3,7 +3,7 @@ from maze import Maze
 from algorithms.bfs import BFS
 from colour import Color
 
-CELL_SIZE = 20
+CELL_SIZE = 10
 WALL_SIZE = 2
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
@@ -19,8 +19,9 @@ class Visualizer:
         pygame.display.set_caption("DSA Pathfinding Visualizer")
 
         self.maze = Maze()
+        self.bfs = BFS(self.maze)
         self.screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
-        self.screen_height = self.maze.height * CELL_SIZE + 32 + CELL_SIZE  # 32 pixels for maze generation time text
+        self.screen_height = self.maze.height * CELL_SIZE + 64 + CELL_SIZE  # 32 pixels for maze generation time text
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
 
@@ -28,6 +29,8 @@ class Visualizer:
                                    self.screen_width, self.screen_height, self.screen, self.font)
         self.bfs_button = Button("Show BFS Path", (self.maze.width + 1) * CELL_SIZE, 60,
                                  self.screen_width, self.screen_height, self.screen, self.font)
+
+        self.visited_nodes = 0
 
         self.initial_draw()
 
@@ -41,13 +44,15 @@ class Visualizer:
                     pos = pygame.mouse.get_pos()
 
                     if self.regen_button.check_collision(pos):
+                        self.bfs.pathfinding_time = 0
+                        self.visited_nodes = 0
                         self.maze.generate_maze()
                         self.initial_draw()
                     elif self.bfs_button.check_collision(pos):
+                        visited, path = self.bfs.find_path()
+                        self.visited_nodes = len(visited)
                         self.initial_draw()
-                        bfs = BFS(self.maze)
-                        visited, path = bfs.find_path()
-                        self.draw_path(path, bfs.start_position, bfs.end_position)
+                        self.draw_path(path, self.bfs.start_position, self.bfs.end_position)
 
             pygame.display.flip()
 
@@ -67,6 +72,14 @@ class Visualizer:
         # Draw Maze generation Time
         text = self.font.render(f"Maze generation time: {self.maze.generation_time} seconds", True, (255, 255, 255))
         self.screen.blit(text, (CELL_SIZE, (self.maze.height + 1) * CELL_SIZE))
+
+        # Draw BFS pathfinding Time
+        text = self.font.render(f"BFS pathfinding time: {self.bfs.pathfinding_time} seconds", True, (255, 255, 255))
+        self.screen.blit(text, (CELL_SIZE, (self.maze.height + 3) * CELL_SIZE))
+
+        # Draw BFS node visit count
+        text = self.font.render(f"BFS visited Nodes: {self.visited_nodes}", True, (255, 255, 255))
+        self.screen.blit(text, (CELL_SIZE, (self.maze.height + 5) * CELL_SIZE))
 
         # TODO: Add text for visited nodes, time elapsed to find shortest path, path length, etc.
 
