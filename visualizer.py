@@ -3,7 +3,7 @@ from maze import Maze
 from algorithms.bfs import BFS
 from colour import Color
 
-CELL_SIZE = 20
+CELL_SIZE = 6
 WALL_SIZE = 2
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
@@ -136,9 +136,11 @@ class Visualizer:
                 else:
                     s = "←"
 
-            text = self.font.render(s, True, (255, 255, 255))
-            text_rect = text.get_rect(center=(x1 + width // 2, y1 + height // 2))
-            self.screen.blit(text, text_rect)
+            # Only draw text when cells are big enough
+            if CELL_SIZE >= 20:
+                text = self.font.render(s, True, (255, 255, 255))
+                text_rect = text.get_rect(center=(x1 + width // 2, y1 + height // 2))
+                self.screen.blit(text, text_rect)
 
 
 class Button:
