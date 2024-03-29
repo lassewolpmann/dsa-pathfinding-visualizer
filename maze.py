@@ -18,18 +18,18 @@ class Maze:
 
         self.directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 
-        self.maze = {}
+        self.graph = {}
         self.visited_cells = {}
         self.generate_maze()
 
     def generate_maze(self):
         for x in range(self.width):
             for y in range(self.height):
-                self.maze[(x, y)] = Maze.Node((x, y), 1)
+                self.graph[(x, y)] = Maze.Node((x, y), 1)
 
         first_node = Maze.Node(self.get_random_unvisited_cell(), 0)
 
-        self.maze[first_node.pos] = first_node
+        self.graph[first_node.pos] = first_node
         self.visited_cells = {first_node.pos}
 
         while len(self.visited_cells) < self.width * self.height:
@@ -54,18 +54,18 @@ class Maze:
                     current_node.walls.remove((pdx * -1, pdy * -1))
 
                 # Step 5: Add node to maze
-                self.maze[(x, y)] = current_node
+                self.graph[(x, y)] = current_node
 
                 # Step 6: Update values
                 (x, y) = (x + dx, y + dy)
                 (pdx, pdy) = (dx, dy)
 
             # Step 7: Get node at final position and remove wall for previous direction
-            self.maze[(x, y)].walls.remove((pdx * -1, pdy * -1))
+            self.graph[(x, y)].walls.remove((pdx * -1, pdy * -1))
 
         # Step 8: Get Neighbors
-        for value in self.maze:
-            node = self.maze[value]
+        for pos in self.graph:
+            node = self.graph[pos]
             (x, y) = node.pos
             node.neighbors = [(x + dx, y + dy) for (dx, dy) in self.directions if (dx, dy) not in node.walls]
 
@@ -73,7 +73,7 @@ class Maze:
         x = random.randint(0, self.width - 1)
         y = random.randint(0, self.height - 1)
 
-        while self.maze[(x, y)].value == 0:
+        while self.graph[(x, y)].value == 0:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)
 

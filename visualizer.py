@@ -1,8 +1,10 @@
 import pygame
 from maze import Maze
 from algorithms.bfs import BFS
+from colour import Color
 
-CELL_SIZE = 10
+CELL_SIZE = 20
+WALL_SIZE = 2
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
 START_COLOR = (0, 255, 0)
@@ -16,7 +18,7 @@ class Visualizer:
         pygame.init()
         pygame.display.set_caption("DSA Pathfinding Visualizer")
 
-        self.screen_width = maze.width * CELL_SIZE + 210 # 210 pixels for buttons
+        self.screen_width = maze.width * CELL_SIZE + 210  # 210 pixels for buttons
         self.screen_height = maze.height * CELL_SIZE
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.maze = maze
@@ -44,7 +46,7 @@ class Visualizer:
                         self.initial_draw()
                         bfs = BFS(self.maze)
                         visited, path = bfs.find_path()
-                        self.draw_path(path, bfs.start_position, bfs.end_position)
+                        self.draw_path(path)
 
             pygame.display.flip()
 
@@ -62,9 +64,9 @@ class Visualizer:
         self.bfs_button.draw()
 
     def draw_maze(self):
-        maze_structure = self.maze.maze
-        for pos in maze_structure:
-            node = maze_structure[pos]
+        graph = self.maze.graph
+        for pos in graph:
+            node = graph[pos]
             x, y = node.pos
             for wall in node.walls:
                 x1, x2, y1, y2 = 0, 0, 0, 0
@@ -90,29 +92,24 @@ class Visualizer:
                     y2 = y + 1
 
                 pygame.draw.line(self.screen, (255, 255, 255), (x1 * CELL_SIZE, y1 * CELL_SIZE),
-                                 (x2 * CELL_SIZE, y2 * CELL_SIZE), width=1)
+                                 (x2 * CELL_SIZE, y2 * CELL_SIZE), width=WALL_SIZE)
 
-    def draw_path(self, path, start_point, end_point):
-        for x, y in path:
+    def draw_path(self, path):
+        red = Color("red")
+        colors = list(red.range_to(Color("green"), len(path)))
+
+        for i, (x, y) in enumerate(path):
+            # Scale x and y to fill Cell
             x *= CELL_SIZE
-            x += 1
+            x += WALL_SIZE
             y *= CELL_SIZE
-            y += 1
-            pygame.draw.rect(self.screen, (0, 100, 0), (x, y, CELL_SIZE - 2, CELL_SIZE - 2))
+            y += WALL_SIZE
 
-        start_x, start_y = start_point
-        start_x *= CELL_SIZE
-        start_x += 1
-        start_y *= CELL_SIZE
-        start_y += 1
-        pygame.draw.rect(self.screen, (0, 255, 0), (start_x, start_y, CELL_SIZE - 2, CELL_SIZE - 2))
+            width = CELL_SIZE - WALL_SIZE
+            height = CELL_SIZE - WALL_SIZE
 
-        end_x, end_y = end_point
-        end_x *= CELL_SIZE
-        end_x += 1
-        end_y *= CELL_SIZE
-        end_y += 1
-        pygame.draw.rect(self.screen, (255, 0, 0), (end_x, end_y, CELL_SIZE - 2, CELL_SIZE - 2))
+            rgb = map(lambda c: c * 255, colors[i].rgb)
+            pygame.draw.rect(self.screen, tuple(rgb), (x, y, width, height))
 
 
 class Button:
