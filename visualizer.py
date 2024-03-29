@@ -3,7 +3,7 @@ from maze import Maze
 from algorithms.bfs import BFS
 from colour import Color
 
-CELL_SIZE = 6
+CELL_SIZE = 20
 WALL_SIZE = 2
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
@@ -20,7 +20,7 @@ class Visualizer:
 
         self.maze = Maze()
         self.screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
-        self.screen_height = self.maze.height * CELL_SIZE + 32  # 32 pixels for maze generation time text
+        self.screen_height = self.maze.height * CELL_SIZE + 32 + CELL_SIZE  # 32 pixels for maze generation time text
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
 
@@ -102,8 +102,7 @@ class Visualizer:
                                  (x2 * CELL_SIZE, y2 * CELL_SIZE), width=WALL_SIZE)
 
     def draw_path(self, path, start, end):
-        red = Color("red")
-        colors = list(red.range_to(Color("green"), len(path)))
+        colors = list(Color("green").range_to(Color("red"), len(path)))
 
         for i, (x, y) in enumerate(path):
             # Scale x and y to fill Cell
