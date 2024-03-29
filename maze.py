@@ -1,4 +1,5 @@
 import random
+import time
 
 
 class Maze:
@@ -19,11 +20,15 @@ class Maze:
 
         self.directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 
+        self.generation_time = 0
+
         self.graph = {}
         self.visited_cells = {}
         self.generate_maze()
 
     def generate_maze(self):
+        start_time = time.time()
+
         for x in range(self.width):
             for y in range(self.height):
                 self.graph[(x, y)] = Maze.Node((x, y), 1)
@@ -69,6 +74,10 @@ class Maze:
             node = self.graph[pos]
             (x, y) = node.pos
             node.neighbors = [(x + dx, y + dy) for (dx, dy) in self.directions if (dx, dy) not in node.walls]
+
+        end_time = time.time()
+
+        self.generation_time = round(end_time - start_time, 5)
 
     def get_random_unvisited_cell(self):
         x = random.randint(0, self.width - 1)

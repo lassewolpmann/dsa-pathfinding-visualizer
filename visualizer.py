@@ -14,15 +14,15 @@ VISITED_COLOR = (255, 0, 255)
 
 
 class Visualizer:
-    def __init__(self, maze: Maze):
+    def __init__(self):
         pygame.init()
         pygame.display.set_caption("DSA Pathfinding Visualizer")
 
-        self.screen_width = maze.width * CELL_SIZE + 210  # 210 pixels for buttons
-        self.screen_height = maze.height * CELL_SIZE
+        self.maze = Maze()
+        self.screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
+        self.screen_height = self.maze.height * CELL_SIZE + 32  # 32 pixels for maze generation time text
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
-        self.maze = maze
 
         self.regen_button = Button("Regenerate Maze", (self.maze.width + 1) * CELL_SIZE, 0,
                                    self.screen_width, self.screen_height, self.screen, self.font)
@@ -63,6 +63,12 @@ class Visualizer:
         # Draw buttons
         self.regen_button.draw()
         self.bfs_button.draw()
+
+        # Draw Maze generation Time
+        text = self.font.render(f"Maze generation time: {self.maze.generation_time} seconds", True, (255, 255, 255))
+        self.screen.blit(text, (CELL_SIZE, (self.maze.height + 1) * CELL_SIZE))
+
+        # TODO: Add text for visited nodes, time elapsed to find shortest path, path length, etc.
 
     def draw_maze(self):
         graph = self.maze.graph
