@@ -12,7 +12,6 @@ class BFS:
         self.graph = maze.graph
         self.pathfinding_time = 0
         self.visited = {}
-        self.path = []
 
     def find_path(self):
         start_time = time.time()

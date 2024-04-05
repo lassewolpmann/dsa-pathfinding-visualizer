@@ -1,6 +1,7 @@
 import pygame
 from maze import Maze
 from algorithms.bfs import BFS
+from algorithms.dfs import DFS
 from colour import Color
 
 CELL_SIZE = 10
@@ -20,6 +21,7 @@ class Visualizer:
 
         self.maze = Maze()
         self.bfs = BFS(self.maze)
+        self.dfs = DFS(self.maze)
         self.screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
         self.screen_height = self.maze.height * CELL_SIZE + 64 + CELL_SIZE  # 32 pixels for maze generation time text
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -28,6 +30,8 @@ class Visualizer:
         self.regen_button = Button("Regenerate Maze", (self.maze.width + 1) * CELL_SIZE, 0,
                                    self.screen_width, self.screen_height, self.screen, self.font)
         self.bfs_button = Button("Show BFS Path", (self.maze.width + 1) * CELL_SIZE, 60,
+                                 self.screen_width, self.screen_height, self.screen, self.font)
+        self.dfs_button = Button("Show DFS Path", (self.maze.width + 1) * CELL_SIZE, 120,
                                  self.screen_width, self.screen_height, self.screen, self.font)
 
         self.visited_nodes = 0
@@ -53,6 +57,11 @@ class Visualizer:
                         self.visited_nodes = len(visited)
                         self.initial_draw()
                         self.draw_path(path, self.bfs.start_position, self.bfs.end_position)
+                    elif self.dfs_button.check_collision(pos):
+                        visited, path = self.dfs.find_path()
+                        self.visited_nodes = len(visited)
+                        self.initial_draw()
+                        self.draw_path(path, self.dfs.start_position, self.dfs.end_position)
 
             pygame.display.flip()
 
@@ -68,6 +77,7 @@ class Visualizer:
         # Draw buttons
         self.regen_button.draw()
         self.bfs_button.draw()
+        self.dfs_button.draw()
 
         # Draw Maze generation Time
         text = self.font.render(f"Maze generation time: {self.maze.generation_time} seconds", True, (255, 255, 255))
