@@ -1,43 +1,31 @@
 from maze import Maze
-from random import randint
 import time
 
+
 class DFS:
-    def __init__(self, maze: Maze):
-        self.start_position = (0, 0)
-        self.end_position = (0, 0)
-        self.maze = maze
-
-        self.graph = maze.graph
+    def __init__(self):
         self.pathfinding_time = 0
-        self.visited = {}
-        self.path = []
+        self.visited_nodes = 0
 
-    def find_path(self):
+    def find_path(self, maze: Maze, start_pos: tuple, end_pos: tuple):
         start_time = time.time()
 
-        self.start_position = (0, 0)
-        self.end_position = (0, 0)
-
-        while self.start_position == self.end_position:
-            self.start_position = (randint(1, self.maze.width - 1), randint(1, self.maze.height - 1))
-            self.end_position = (randint(1, self.maze.width - 1), randint(1, self.maze.height - 1))
-
-        visited = {self.start_position}
-        stack = [(self.start_position, [self.start_position])]
+        visited = {start_pos}
+        stack = [(start_pos, [start_pos])]
 
         while stack:
             current_node, path = stack.pop()
                   
-            if current_node == self.end_position:
+            if current_node == end_pos:
                 end_time = time.time()
                 self.pathfinding_time = round(end_time - start_time, 5)
+                self.visited_nodes = len(visited)
 
                 return visited, path
 
             if current_node not in visited:
                 visited.add(current_node)
 
-            for neighbor in self.graph[current_node].neighbors:
+            for neighbor in maze.graph[current_node].neighbors:
                 if neighbor not in visited:
                     stack.append((neighbor, path + [neighbor]))

@@ -1,5 +1,6 @@
 import random
 import time
+from random import randint
 
 
 class Maze:
@@ -17,6 +18,7 @@ class Maze:
     def __init__(self):
         self.width = int(input("Enter the width of the maze: "))
         self.height = int(input("Enter the height of the maze: "))
+        self.start_position, self.end_position = (0, 0), (0, 0)
 
         self.directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 
@@ -25,6 +27,7 @@ class Maze:
         self.graph = {}
         self.visited_cells = {}
         self.generate_maze()
+        self.generate_start_end()
 
     def generate_maze(self):
         start_time = time.time()
@@ -102,3 +105,11 @@ class Maze:
                 x, y = nx, ny
 
         return path
+
+    def generate_start_end(self):
+        self.start_position = (0, 0)
+        self.end_position = (0, 0)
+
+        while self.start_position == self.end_position:
+            self.start_position = (randint(1, self.width - 1), randint(1, self.height - 1))
+            self.end_position = (randint(1, self.width - 1), randint(1, self.height - 1))

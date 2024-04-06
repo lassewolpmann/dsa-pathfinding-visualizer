@@ -1,43 +1,31 @@
 from maze import Maze
-from random import randint
 import time
 
 
 class BFS:
-    def __init__(self, maze: Maze):
-        self.start_position = (0, 0)
-        self.end_position = (0, 0)
-        self.maze = maze
-
-        self.graph = maze.graph
+    def __init__(self):
         self.pathfinding_time = 0
-        self.visited = {}
+        self.visited_nodes = 0
 
-    def find_path(self):
+    def find_path(self, maze: Maze, start_pos: tuple, end_pos: tuple):
         start_time = time.time()
 
-        self.start_position = (0, 0)
-        self.end_position = (0, 0)
-
-        while self.start_position == self.end_position:
-            self.start_position = (randint(1, self.maze.width - 1), randint(1, self.maze.height - 1))
-            self.end_position = (randint(1, self.maze.width - 1), randint(1, self.maze.height - 1))
-
-        queue = [(self.start_position, [self.start_position])]
+        queue = [(start_pos, [start_pos])]
         # Enqueue the start node and mark it as visited
-        visited = {self.start_position}
+        visited = {start_pos}
 
         while queue:
             # Dequeue a node and its path
             current_node, path = queue.pop(0)
             # If the current node is the end node, return the path
-            if current_node == self.end_position:
+            if current_node == end_pos:
                 end_time = time.time()
                 self.pathfinding_time = round(end_time - start_time, 5)
+                self.visited_nodes = len(visited)
 
                 return visited, path
             # Explore neighbors of the current node
-            for neighbor in self.graph[current_node].neighbors:
+            for neighbor in maze.graph[current_node].neighbors:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     # Enqueue the neighbor and update the path

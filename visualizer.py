@@ -20,21 +20,20 @@ class Visualizer:
         pygame.display.set_caption("DSA Pathfinding Visualizer")
 
         self.maze = Maze()
-        self.bfs = BFS(self.maze)
-        self.dfs = DFS(self.maze)
-        self.screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
-        self.screen_height = self.maze.height * CELL_SIZE + 64 + CELL_SIZE  # 32 pixels for maze generation time text
-        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        self.bfs = BFS()
+        self.dfs = DFS()
+
+        screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
+        screen_height = self.maze.height * CELL_SIZE + 64 + CELL_SIZE  # 32 pixels for maze generation time text
+        self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
 
         self.regen_button = Button("Regenerate Maze", (self.maze.width + 1) * CELL_SIZE, 0,
-                                   self.screen_width, self.screen_height, self.screen, self.font)
+                                   screen_width, screen_height, self.screen, self.font)
         self.bfs_button = Button("Show BFS Path", (self.maze.width + 1) * CELL_SIZE, 60,
-                                 self.screen_width, self.screen_height, self.screen, self.font)
+                                 screen_width, screen_height, self.screen, self.font)
         self.dfs_button = Button("Show DFS Path", (self.maze.width + 1) * CELL_SIZE, 120,
-                                 self.screen_width, self.screen_height, self.screen, self.font)
-
-        self.visited_nodes = 0
+                                 screen_width, screen_height, self.screen, self.font)
 
         self.initial_draw()
 
@@ -51,17 +50,16 @@ class Visualizer:
                         self.bfs.pathfinding_time = 0
                         self.visited_nodes = 0
                         self.maze.generate_maze()
+                        self.maze.generate_start_end()
                         self.initial_draw()
                     elif self.bfs_button.check_collision(pos):
-                        visited, path = self.bfs.find_path()
-                        self.visited_nodes = len(visited)
+                        visited, path = self.bfs.find_path(self.maze, self.maze.start_position, self.maze.end_position)
                         self.initial_draw()
-                        self.draw_path(path, self.bfs.start_position, self.bfs.end_position)
+                        self.draw_path(path)
                     elif self.dfs_button.check_collision(pos):
-                        visited, path = self.dfs.find_path()
-                        self.visited_nodes = len(visited)
+                        visited, path = self.dfs.find_path(self.maze, self.maze.start_position, self.maze.end_position)
                         self.initial_draw()
-                        self.draw_path(path, self.dfs.start_position, self.dfs.end_position)
+                        self.draw_path(path)
 
             pygame.display.flip()
 
@@ -124,7 +122,7 @@ class Visualizer:
                 pygame.draw.line(self.screen, (255, 255, 255), (x1 * CELL_SIZE, y1 * CELL_SIZE),
                                  (x2 * CELL_SIZE, y2 * CELL_SIZE), width=WALL_SIZE)
 
-    def draw_path(self, path, start, end):
+    def draw_path(self, path):
         colors = list(Color("green").range_to(Color("red"), len(path)))
 
         for i, (x, y) in enumerate(path):
@@ -140,10 +138,10 @@ class Visualizer:
             rgb = map(lambda c: c * 255, colors[i].rgb)
             pygame.draw.rect(self.screen, tuple(rgb), (x1, y1, width, height))
 
-            if (x, y) == start:
+            if (x, y) == self.maze.start_position:
                 s = "S"
 
-            elif (x, y) == end:
+            elif (x, y) == self.maze.end_position:
                 s = "E"
             else:
                 current_pos = self.maze.graph[(x, y)].pos
