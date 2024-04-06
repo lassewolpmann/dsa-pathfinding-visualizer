@@ -24,7 +24,7 @@ class Visualizer:
         self.dfs = DFS()
 
         screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
-        screen_height = self.maze.height * CELL_SIZE + 64 + CELL_SIZE  # 32 pixels for maze generation time text
+        screen_height = self.maze.height * CELL_SIZE + WALL_SIZE  # 32 pixels for maze generation time text
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
 
@@ -38,7 +38,9 @@ class Visualizer:
         self.initial_draw()
 
         running = True
+
         while running:
+            # Loop to get events
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -47,18 +49,16 @@ class Visualizer:
                     pos = pygame.mouse.get_pos()
 
                     if self.regen_button.check_collision(pos):
-                        self.bfs.pathfinding_time = 0
-                        self.visited_nodes = 0
                         self.maze.generate_maze()
                         self.maze.generate_start_end()
                         self.initial_draw()
                     elif self.bfs_button.check_collision(pos):
-                        visited, path = self.bfs.find_path(self.maze, self.maze.start_position, self.maze.end_position)
                         self.initial_draw()
+                        path = self.bfs.find_path(self)
                         self.draw_path(path)
                     elif self.dfs_button.check_collision(pos):
-                        visited, path = self.dfs.find_path(self.maze, self.maze.start_position, self.maze.end_position)
                         self.initial_draw()
+                        path = self.dfs.find_path(self)
                         self.draw_path(path)
 
             pygame.display.flip()
@@ -66,7 +66,7 @@ class Visualizer:
         pygame.quit()
 
     def initial_draw(self):
-        # Fill Screen with White
+        # Fill Screen with Black
         self.screen.fill(WALL_COLOR)
 
         # Draw Maze
@@ -76,20 +76,6 @@ class Visualizer:
         self.regen_button.draw()
         self.bfs_button.draw()
         self.dfs_button.draw()
-
-        # Draw Maze generation Time
-        text = self.font.render(f"Maze generation time: {self.maze.generation_time} seconds", True, (255, 255, 255))
-        self.screen.blit(text, (CELL_SIZE, (self.maze.height + 1) * CELL_SIZE))
-
-        # Draw BFS pathfinding Time
-        text = self.font.render(f"BFS pathfinding time: {self.bfs.pathfinding_time} seconds", True, (255, 255, 255))
-        self.screen.blit(text, (CELL_SIZE, (self.maze.height + 3) * CELL_SIZE))
-
-        # Draw BFS node visit count
-        text = self.font.render(f"BFS visited Nodes: {self.visited_nodes}", True, (255, 255, 255))
-        self.screen.blit(text, (CELL_SIZE, (self.maze.height + 5) * CELL_SIZE))
-
-        # TODO: Add text for visited nodes, time elapsed to find shortest path, path length, etc.
 
     def draw_maze(self):
         graph = self.maze.graph
@@ -122,51 +108,31 @@ class Visualizer:
                 pygame.draw.line(self.screen, (255, 255, 255), (x1 * CELL_SIZE, y1 * CELL_SIZE),
                                  (x2 * CELL_SIZE, y2 * CELL_SIZE), width=WALL_SIZE)
 
+        start_x, start_y = self.maze.start_position
+        self.draw_rect(start_x, start_y, (0, 255, 0))
+
+        end_x, end_y = self.maze.end_position
+        self.draw_rect(end_x, end_y, (255, 0, 0))
+
+    def draw_rect(self, x, y, rgb):
+        # Scale x and y to fill Cell
+        x1 = x * CELL_SIZE
+        x1 += WALL_SIZE
+        y1 = y * CELL_SIZE
+        y1 += WALL_SIZE
+
+        width = CELL_SIZE - WALL_SIZE
+        height = CELL_SIZE - WALL_SIZE
+
+        pygame.draw.rect(self.screen, tuple(rgb), (x1, y1, width, height))
+        pygame.display.flip()
+
     def draw_path(self, path):
         colors = list(Color("green").range_to(Color("red"), len(path)))
 
         for i, (x, y) in enumerate(path):
-            # Scale x and y to fill Cell
-            x1 = x * CELL_SIZE
-            x1 += WALL_SIZE
-            y1 = y * CELL_SIZE
-            y1 += WALL_SIZE
-
-            width = CELL_SIZE - WALL_SIZE
-            height = CELL_SIZE - WALL_SIZE
-
             rgb = map(lambda c: c * 255, colors[i].rgb)
-            pygame.draw.rect(self.screen, tuple(rgb), (x1, y1, width, height))
-
-            if (x, y) == self.maze.start_position:
-                s = "S"
-
-            elif (x, y) == self.maze.end_position:
-                s = "E"
-            else:
-                current_pos = self.maze.graph[(x, y)].pos
-                next_pos = self.maze.graph[path[i + 1]].pos
-                c_x, c_y = current_pos
-                n_x, n_y = next_pos
-                dx = n_x - c_x
-                dy = n_y - c_y
-
-                direction = (dx, dy)
-                directions = self.maze.directions
-                if direction == directions[0]:
-                    s = "↑"
-                elif direction == directions[1]:
-                    s = "→"
-                elif direction == directions[2]:
-                    s = "↓"
-                else:
-                    s = "←"
-
-            # Only draw text when cells are big enough
-            if CELL_SIZE >= 20:
-                text = self.font.render(s, True, (255, 255, 255))
-                text_rect = text.get_rect(center=(x1 + width // 2, y1 + height // 2))
-                self.screen.blit(text, text_rect)
+            self.draw_rect(x, y, rgb)
 
 
 class Button:

@@ -1,4 +1,3 @@
-from maze import Maze
 import time
 
 
@@ -7,27 +6,28 @@ class DFS:
         self.pathfinding_time = 0
         self.visited_nodes = 0
 
-    def find_path(self, maze: Maze, start_pos: tuple, end_pos: tuple):
+    def find_path(self, visualizer):
+        self.pathfinding_time = 0
         start_time = time.time()
 
         # A set to store visited nodes
-        visited = {start_pos}
+        visited = {visualizer.maze.start_position}
 
         # DFS uses stack (FIFO principle)
         # Initialize a stack array, containing tuples with node and path
-        stack = [(start_pos, [start_pos])]
+        stack = [(visualizer.maze.start_position, [visualizer.maze.start_position])]
 
         while stack:
             current_node, path = stack.pop()  # Pop the last item in the list!
 
             # Check if the current node is the end node.
             # If yes, update the pathfinding time and return the visited nodes and path.
-            if current_node == end_pos:
+            if current_node == visualizer.maze.end_position:
                 end_time = time.time()
                 self.pathfinding_time = round(end_time - start_time, 5)
                 self.visited_nodes = len(visited)
 
-                return visited, path
+                return path
             
             # If current node is not the end node continue search
 
@@ -36,6 +36,9 @@ class DFS:
                 visited.add(current_node)
 
             # Check the neighbors of the current node and if the neighbor has not been visited yet, add it to the stack 
-            for neighbor in maze.graph[current_node].neighbors:
+            for neighbor in visualizer.maze.graph[current_node].neighbors:
+                x, y = neighbor
+                visualizer.draw_rect(x, y, (0, 0, 255))
+
                 if neighbor not in visited:
                     stack.append((neighbor, path + [neighbor]))
