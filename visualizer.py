@@ -2,6 +2,7 @@ import pygame
 from maze import Maze
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
+from algorithms.dijkstra import Dijkstra
 from colour import Color
 
 CELL_SIZE = 10
@@ -22,6 +23,7 @@ class Visualizer:
         self.maze = Maze()
         self.bfs = BFS()
         self.dfs = DFS()
+        #self.dijkstra = Dijkstra()
 
         screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
         screen_height = self.maze.height * CELL_SIZE + WALL_SIZE  # 32 pixels for maze generation time text
@@ -34,6 +36,8 @@ class Visualizer:
                                  screen_width, screen_height, self.screen, self.font)
         self.dfs_button = Button("Show DFS Path", (self.maze.width + 1) * CELL_SIZE, 120,
                                  screen_width, screen_height, self.screen, self.font)
+        #self.dijkstra_button = Button("Show Dijkstra Path", (self.maze.width + 1) * CELL_SIZE, 120,
+                                 #screen_width, screen_height, self.screen, self.font)
 
         self.initial_draw()
 
@@ -60,6 +64,10 @@ class Visualizer:
                         self.initial_draw()
                         path = self.dfs.find_path(self)
                         self.draw_path(path)
+                    #elif self.dijkstra_button.check_collision(pos):
+                        #self.initial_draw()
+                        #path = self.dijkstra.find_path(self)
+                        #self.draw_path(path)
 
             pygame.display.flip()
 
@@ -76,6 +84,7 @@ class Visualizer:
         self.regen_button.draw()
         self.bfs_button.draw()
         self.dfs_button.draw()
+        #self.dijkstra_button.draw()
 
     def draw_maze(self):
         graph = self.maze.graph
