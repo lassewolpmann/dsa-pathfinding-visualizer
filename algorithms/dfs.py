@@ -1,5 +1,6 @@
 import time
 
+
 class DFS:
     def __init__(self):
         self.pathfinding_time = 0
