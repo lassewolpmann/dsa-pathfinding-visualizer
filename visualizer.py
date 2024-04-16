@@ -23,10 +23,13 @@ class Visualizer:
         self.maze = Maze()
         self.bfs = BFS()
         self.dfs = DFS()
+
+        # In our case Dijkstra has to visit every single cell of the maze
+        # https://chat.openai.com/share/a4588b64-bd93-4855-966c-2a041baf7627
         self.dijkstra = Dijkstra()
 
-        screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
-        screen_height = self.maze.height * CELL_SIZE + WALL_SIZE  # 32 pixels for maze generation time text
+        screen_width = self.maze.width * CELL_SIZE + 210                # 210 pixels for buttons
+        screen_height = self.maze.height * CELL_SIZE + WALL_SIZE
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
 
@@ -40,6 +43,8 @@ class Visualizer:
                                       screen_width, screen_height, self.screen, self.font)
 
         self.initial_draw()
+        self.draw_visited_nodes()
+        self.draw_pathfinding_time()
 
         running = True
 
@@ -55,19 +60,28 @@ class Visualizer:
                     if self.regen_button.check_collision(pos):
                         self.maze.generate_maze()
                         self.maze.generate_start_end()
+                        self.bfs = BFS()
+                        self.dfs = DFS()
+                        self.dijkstra = Dijkstra()
                         self.initial_draw()
+
                     elif self.bfs_button.check_collision(pos):
                         self.initial_draw()
                         path = self.bfs.find_path(self)
                         self.draw_path(path)
+
                     elif self.dfs_button.check_collision(pos):
                         self.initial_draw()
                         path = self.dfs.find_path(self)
                         self.draw_path(path)
+
                     elif self.dijkstra_button.check_collision(pos):
                         self.initial_draw()
                         path = self.dijkstra.find_path(self)
                         self.draw_path(path)
+
+                    self.draw_visited_nodes()
+                    self.draw_pathfinding_time()
 
             pygame.display.flip()
 
@@ -143,6 +157,18 @@ class Visualizer:
             rgb = map(lambda c: c * 255, colors[i].rgb)
             self.draw_rect(x, y, rgb)
 
+    def draw_visited_nodes(self):
+        Text("Visited Nodes:", self.maze, 240, self.screen, self.font)
+        Text(f"BFS: {self.bfs.visited_nodes}", self.maze, 260, self.screen, self.font)
+        Text(f"DFS: {self.dfs.visited_nodes}", self.maze, 280, self.screen, self.font)
+        Text(f"Dijkstra: {self.dijkstra.visited_nodes}", self.maze, 300, self.screen, self.font)
+
+    def draw_pathfinding_time(self):
+        Text("Pathfinding Time:", self.maze, 340, self.screen, self.font)
+        Text(f"BFS: {self.bfs.pathfinding_time}s", self.maze, 360, self.screen, self.font)
+        Text(f"DFS: {self.dfs.pathfinding_time}s", self.maze, 380, self.screen, self.font)
+        Text(f"Dijkstra: {self.dijkstra.pathfinding_time}s", self.maze, 400, self.screen, self.font)
+
 
 class Button:
     def __init__(self, button_text, x, y, width, height, screen, font):
@@ -166,3 +192,9 @@ class Button:
 
     def check_collision(self, mouse_pos) -> bool:
         return self.x <= mouse_pos[0] <= self.x + self.width and self.y <= mouse_pos[1] <= self.y + self.height
+
+
+class Text:
+    def __init__(self, text, maze, y, screen, font):
+        text = font.render(str(text), True, (255, 255, 255))
+        screen.blit(text, ((maze.width + 1) * CELL_SIZE, y))
