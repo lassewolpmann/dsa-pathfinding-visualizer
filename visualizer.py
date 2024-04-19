@@ -3,6 +3,7 @@ from maze import Maze
 from algorithms.bfs import BFS
 from algorithms.dfs import DFS
 from algorithms.dijkstra import Dijkstra
+from algorithms.astar import AStar
 from colour import Color
 
 CELL_SIZE = 10
@@ -23,12 +24,13 @@ class Visualizer:
         self.maze = Maze()
         self.bfs = BFS()
         self.dfs = DFS()
+        self.astar = AStar()
 
         # In our case Dijkstra has to visit every single cell of the maze
         # https://chat.openai.com/share/a4588b64-bd93-4855-966c-2a041baf7627
         self.dijkstra = Dijkstra()
 
-        screen_width = self.maze.width * CELL_SIZE + 210                # 210 pixels for buttons
+        screen_width = self.maze.width * CELL_SIZE + 210  # 210 pixels for buttons
         screen_height = self.maze.height * CELL_SIZE + WALL_SIZE
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         self.font = pygame.font.SysFont("arial", 16, bold=True)
@@ -41,6 +43,8 @@ class Visualizer:
                                  screen_width, screen_height, self.screen, self.font)
         self.dijkstra_button = Button("Show Dijkstra Path", (self.maze.width + 1) * CELL_SIZE, 180,
                                       screen_width, screen_height, self.screen, self.font)
+        self.astar_button = Button("Show A* Path", (self.maze.width + 1) * CELL_SIZE, 240,
+                                   screen_width, screen_height, self.screen, self.font)
 
         self.initial_draw()
         self.draw_visited_nodes()
@@ -80,6 +84,11 @@ class Visualizer:
                         path = self.dijkstra.find_path(self)
                         self.draw_path(path)
 
+                    elif self.astar_button.check_collision(pos):
+                        self.initial_draw()
+                        path = self.astar.find_path(self)
+                        self.draw_path(path)
+
                     self.draw_visited_nodes()
                     self.draw_pathfinding_time()
 
@@ -99,6 +108,7 @@ class Visualizer:
         self.bfs_button.draw()
         self.dfs_button.draw()
         self.dijkstra_button.draw()
+        self.astar_button.draw()
 
     def draw_maze(self):
         graph = self.maze.graph
@@ -158,16 +168,18 @@ class Visualizer:
             self.draw_rect(x, y, rgb)
 
     def draw_visited_nodes(self):
-        Text("Visited Nodes:", self.maze, 240, self.screen, self.font)
-        Text(f"BFS: {self.bfs.visited_nodes}", self.maze, 260, self.screen, self.font)
-        Text(f"DFS: {self.dfs.visited_nodes}", self.maze, 280, self.screen, self.font)
-        Text(f"Dijkstra: {self.dijkstra.visited_nodes}", self.maze, 300, self.screen, self.font)
+        Text("Visited Nodes:", self.maze, 300, self.screen, self.font)
+        Text(f"BFS: {self.bfs.visited_nodes}", self.maze, 320, self.screen, self.font)
+        Text(f"DFS: {self.dfs.visited_nodes}", self.maze, 340, self.screen, self.font)
+        Text(f"Dijkstra: {self.dijkstra.visited_nodes}", self.maze, 360, self.screen, self.font)
+        Text(f"A*: {self.astar.visited_nodes}", self.maze, 380, self.screen, self.font)
 
     def draw_pathfinding_time(self):
-        Text("Pathfinding Time:", self.maze, 340, self.screen, self.font)
-        Text(f"BFS: {self.bfs.pathfinding_time}s", self.maze, 360, self.screen, self.font)
-        Text(f"DFS: {self.dfs.pathfinding_time}s", self.maze, 380, self.screen, self.font)
-        Text(f"Dijkstra: {self.dijkstra.pathfinding_time}s", self.maze, 400, self.screen, self.font)
+        Text("Pathfinding Time:", self.maze, 420, self.screen, self.font)
+        Text(f"BFS: {self.bfs.pathfinding_time}s", self.maze, 440, self.screen, self.font)
+        Text(f"DFS: {self.dfs.pathfinding_time}s", self.maze, 460, self.screen, self.font)
+        Text(f"Dijkstra: {self.dijkstra.pathfinding_time}s", self.maze, 480, self.screen, self.font)
+        Text(f"A*: {self.astar.pathfinding_time}s", self.maze, 500, self.screen, self.font)
 
 
 class Button:

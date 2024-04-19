@@ -1,6 +1,5 @@
 import sys
 import time
-import heapq
 
 
 class Dijkstra:
