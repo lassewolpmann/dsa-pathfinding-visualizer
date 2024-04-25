@@ -1,6 +1,7 @@
 import random
 import time
 from random import randint
+import sys
 
 
 class Maze:
@@ -11,11 +12,17 @@ class Maze:
             self.weight = randint(1, 50)
             self.walls = [(0, -1), (1, 0), (0, 1), (-1, 0)]
             self.neighbors = []
-            self.g = 0
-            self.f = 0
+            self.g = sys.maxsize
+            self.f = sys.maxsize    # Basically infinity
 
         def __str__(self):
             return f"Node at {self.pos} with neighbors at {self.neighbors} and walls at {self.walls}"
+
+        def __lt__(self, other):
+            return self.f < other.f
+
+        def __le__(self, other):
+            return self.f <= other.f
 
     def __init__(self):
         self.width = int(input("Enter the width of the maze: "))
