@@ -24,9 +24,15 @@ class Maze:
         def __le__(self, other):
             return self.f <= other.f
 
-    def __init__(self):
-        self.width = int(input("Enter the width of the maze: "))
-        self.height = int(input("Enter the height of the maze: "))
+    def __init__(self, width: int, height: int):
+        if width == 0 or height == 0:
+            self.width = int(input("Enter the width of the maze: "))
+            self.height = int(input("Enter the height of the maze: "))
+
+        else:
+            self.width = width
+            self.height = height
+
         self.start_position, self.end_position = (0, 0), (0, 0)
 
         self.directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]

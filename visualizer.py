@@ -17,11 +17,11 @@ VISITED_COLOR = (255, 0, 255)
 
 
 class Visualizer:
-    def __init__(self):
+    def __init__(self, width: int, height: int):
         pygame.init()
         pygame.display.set_caption("DSA Pathfinding Visualizer")
 
-        self.maze = Maze()
+        self.maze = Maze(width, height)
         self.bfs = BFS()
         self.dfs = DFS()
         self.astar = AStar()
@@ -76,6 +76,7 @@ class Visualizer:
                             self.bfs.find_path(self)
 
                         self.draw_path(self.bfs.path)
+                        print(f"Path length: {len(self.bfs.path)}")
 
                     elif self.dfs_button.check_collision(pos):
                         self.initial_draw()
