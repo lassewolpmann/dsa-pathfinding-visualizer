@@ -16,6 +16,7 @@ class AStar:
         self.visited_nodes = 0
         self.distances = {}
         self.prev = {}
+        self.path = []
 
     def find_path(self, visualizer):
         self.pathfinding_time = 0
@@ -38,20 +39,20 @@ class AStar:
 
             # Reconstruct path when reaching end pos
             if current_node.pos == end_node.pos:
-                path = []
                 node = end_node.pos
 
                 while node != start_node.pos:
-                    path.append(node)
+                    self.path.append(node)
                     node = came_from[node]
 
-                path.append(start_node.pos)
+                self.path.append(start_node.pos)
 
                 self.pathfinding_time = round(time.time() - start_time, 5)
                 self.visited_nodes = len(came_from)
 
-                path.reverse()
-                return path
+                self.path.reverse()
+
+                return
 
             for neighbor in current_node.neighbors:
                 neighbor_node = visualizer.maze.graph[neighbor]

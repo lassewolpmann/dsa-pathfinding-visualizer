@@ -5,6 +5,7 @@ class DFS:
     def __init__(self):
         self.pathfinding_time = 0
         self.visited_nodes = 0
+        self.path = []
 
     def find_path(self, visualizer):
         self.pathfinding_time = 0
@@ -18,7 +19,7 @@ class DFS:
         stack = [(visualizer.maze.start_position, [visualizer.maze.start_position])]
 
         while stack:
-            current_node, path = stack.pop()  # Pop the last item in the list!
+            current_node, self.path = stack.pop()  # Pop the last item in the list!
 
             # Check if the current node is the end node.
             # If yes, update the pathfinding time and return the visited nodes and path.
@@ -27,7 +28,7 @@ class DFS:
                 self.pathfinding_time = round(end_time - start_time, 5)
                 self.visited_nodes = len(visited)
 
-                return path
+                return
             
             # If current node is not the end node continue search
 
@@ -41,4 +42,4 @@ class DFS:
                 visualizer.draw_rect(x, y, (0, 0, 255))
 
                 if neighbor not in visited:
-                    stack.append((neighbor, path + [neighbor]))
+                    stack.append((neighbor, self.path + [neighbor]))

@@ -5,6 +5,7 @@ class BFS:
     def __init__(self):
         self.pathfinding_time = 0
         self.visited_nodes = 0
+        self.path = []
 
     def find_path(self, visualizer):
         self.pathfinding_time = 0
@@ -16,7 +17,7 @@ class BFS:
 
         while queue:
             # Dequeue a node and its path
-            current_node, path = queue.pop(0)
+            current_node, self.path = queue.pop(0)
 
             # If the current node is the end node, return the path
             if current_node == visualizer.maze.end_position:
@@ -24,7 +25,7 @@ class BFS:
                 self.pathfinding_time = round(end_time - start_time, 5)
                 self.visited_nodes = len(visited)
 
-                return path
+                return
             # Explore neighbors of the current node
             for neighbor in visualizer.maze.graph[current_node].neighbors:
                 if neighbor not in visited:
@@ -35,4 +36,4 @@ class BFS:
                     visualizer.draw_rect(x, y, (0, 0, 255))
 
                     # Enqueue the neighbor and update the path
-                    queue.append((neighbor, path + [neighbor]))
+                    queue.append((neighbor, self.path + [neighbor]))

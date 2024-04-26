@@ -8,6 +8,7 @@ class Dijkstra:
         self.visited_nodes = 0
         self.distances = {}
         self.prev = {}
+        self.path = []
 
     def find_path(self, visualizer):
         self.pathfinding_time = 0
@@ -48,17 +49,17 @@ class Dijkstra:
             # After visiting its neighbors, we mark the node as "visited"
             unvisited_nodes.remove(current_min_node)
 
-        path = []
         node = visualizer.maze.end_position
 
         while node != visualizer.maze.start_position:
-            path.append(node)
+            self.path.append(node)
             node = previous_nodes[node]
 
-        path.append(visualizer.maze.start_position)
+        self.path.append(visualizer.maze.start_position)
 
         self.pathfinding_time = round(time.time() - start_time, 5)
         self.visited_nodes = len(previous_nodes)
 
-        path.reverse()
-        return path
+        self.path.reverse()
+
+        return

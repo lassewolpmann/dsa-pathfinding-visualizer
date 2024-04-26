@@ -6,7 +6,7 @@ from algorithms.dijkstra import Dijkstra
 from algorithms.astar import AStar
 from colour import Color
 
-CELL_SIZE = 10
+CELL_SIZE = 6
 WALL_SIZE = 2
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
@@ -71,23 +71,35 @@ class Visualizer:
 
                     elif self.bfs_button.check_collision(pos):
                         self.initial_draw()
-                        path = self.bfs.find_path(self)
-                        self.draw_path(path)
+
+                        if not self.bfs.path:
+                            self.bfs.find_path(self)
+
+                        self.draw_path(self.bfs.path)
 
                     elif self.dfs_button.check_collision(pos):
                         self.initial_draw()
-                        path = self.dfs.find_path(self)
-                        self.draw_path(path)
+
+                        if not self.dfs.path:
+                            self.dfs.find_path(self)
+
+                        self.draw_path(self.dfs.path)
 
                     elif self.dijkstra_button.check_collision(pos):
                         self.initial_draw()
-                        path = self.dijkstra.find_path(self)
-                        self.draw_path(path)
+
+                        if not self.dijkstra.path:
+                            self.dijkstra.find_path(self)
+
+                        self.draw_path(self.dijkstra.path)
 
                     elif self.astar_button.check_collision(pos):
                         self.initial_draw()
-                        path = self.astar.find_path(self)
-                        self.draw_path(path)
+
+                        if not self.astar.path:
+                            self.astar.find_path(self)
+
+                        self.draw_path(self.astar.path)
 
                     self.draw_visited_nodes()
                     self.draw_pathfinding_time()
