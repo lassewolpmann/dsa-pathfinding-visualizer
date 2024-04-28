@@ -35,10 +35,18 @@ if __name__ == "__main__":
 
             maze = Maze(size, size)
             print(f"Maze size: {size}x{size}")
-            bfs.find_path_automated(maze)
-            dfs.find_path_automated(maze)
-            dijs.find_path_automated(maze)
-            astar.find_path_automated(maze)
+
+            print("BFS")
+            bfs.find_path(maze)
+
+            print("DFS")
+            dfs.find_path(maze)
+
+            print("Dijkstra")
+            dijs.find_path(maze)
+
+            print("A*")
+            astar.find_path(maze)
 
             with open('data.csv', 'a') as file:
                 fieldnames = ['maze_size', 'algorithm', 'pathfinding_time', 'visited_nodes', 'path_length']

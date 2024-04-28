@@ -73,16 +73,17 @@ class Visualizer:
                         self.initial_draw()
 
                         if not self.bfs.path:
-                            self.bfs.find_path(self)
+                            self.bfs.find_path(self.maze)
+                            self.draw_visited(self.bfs.visited)
 
                         self.draw_path(self.bfs.path)
-                        print(f"Path length: {len(self.bfs.path)}")
 
                     elif self.dfs_button.check_collision(pos):
                         self.initial_draw()
 
                         if not self.dfs.path:
-                            self.dfs.find_path(self)
+                            self.dfs.find_path(self.maze)
+                            self.draw_visited(self.dfs.visited)
 
                         self.draw_path(self.dfs.path)
 
@@ -90,7 +91,8 @@ class Visualizer:
                         self.initial_draw()
 
                         if not self.dijkstra.path:
-                            self.dijkstra.find_path(self)
+                            self.dijkstra.find_path(self.maze)
+                            self.draw_visited(self.dijkstra.previous_nodes.keys())
 
                         self.draw_path(self.dijkstra.path)
 
@@ -98,7 +100,8 @@ class Visualizer:
                         self.initial_draw()
 
                         if not self.astar.path:
-                            self.astar.find_path(self)
+                            self.astar.find_path(self.maze)
+                            self.draw_visited(self.astar.came_from.keys())
 
                         self.draw_path(self.astar.path)
 
@@ -179,6 +182,11 @@ class Visualizer:
         for i, (x, y) in enumerate(path):
             rgb = map(lambda c: c * 255, colors[i].rgb)
             self.draw_rect(x, y, rgb)
+
+    def draw_visited(self, visited):
+        for node in visited:
+            x, y = node
+            self.draw_rect(x, y, (0, 0, 255))
 
     def draw_visited_nodes(self):
         Text("Visited Nodes:", self.maze, 300, self.screen, self.font)

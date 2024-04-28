@@ -1,63 +1,17 @@
 import time
 import heapq
+from algorithms.path import trace_back_path
 
 
 class Dijkstra:
     def __init__(self):
         self.pathfinding_time = 0
         self.visited_nodes = 0
-        self.distances = {}
-        self.prev = {}
+
+        self.previous_nodes = {}
         self.path = []
 
-    def trace_path(self, maze, previous_nodes, start_time):
-        # Trace back path
-        node = maze.end_position
-
-        while node != maze.start_position:
-            self.path.append(node)
-            node = previous_nodes[node]
-
-        self.path.append(maze.start_position)
-
-        self.pathfinding_time = round(time.time() - start_time, 5)
-        self.visited_nodes = len(previous_nodes)
-
-        self.path.reverse()
-
-    def find_path(self, visualizer):
-        self.pathfinding_time = 0
-        start_time = time.time()
-
-        distances = {node: float('infinity') for node in visualizer.maze.graph.keys()}
-        distances[visualizer.maze.start_position] = 0
-
-        pq = [(0, visualizer.maze.start_position)]
-
-        previous_nodes = {}
-
-        while pq:
-            current_distance, current_node = heapq.heappop(pq)
-
-            if current_distance > distances[current_node]:
-                continue
-
-            neighbors = visualizer.maze.graph[current_node].neighbors
-            for neighbor in neighbors:
-                x, y = neighbor
-                visualizer.draw_rect(x, y, (0, 0, 255))
-
-                distance = current_distance + 1
-                if distance < distances[neighbor]:
-                    distances[neighbor] = distance
-                    previous_nodes[neighbor] = current_node
-                    heapq.heappush(pq, (distance, neighbor))
-
-        self.trace_path(visualizer.maze, previous_nodes, start_time)
-
-        return
-
-    def find_path_automated(self, maze):
+    def find_path(self, maze):
         self.pathfinding_time = 0
         start_time = time.time()
 
@@ -66,10 +20,7 @@ class Dijkstra:
 
         pq = [(0, maze.start_position)]
 
-        previous_nodes = {}
-
         while pq:
-            # Get lowest distance node
             current_distance, current_node = heapq.heappop(pq)
 
             if current_distance > distances[current_node]:
@@ -77,20 +28,16 @@ class Dijkstra:
 
             neighbors = maze.graph[current_node].neighbors
             for neighbor in neighbors:
-                # Since we are using an unweighted graph, we always add 1
-                distance = current_distance + 1
 
-                # Only run if the updated distance is lower than the previous distance
+                distance = current_distance + 1
                 if distance < distances[neighbor]:
                     distances[neighbor] = distance
-                    previous_nodes[neighbor] = current_node
+                    self.previous_nodes[neighbor] = current_node
                     heapq.heappush(pq, (distance, neighbor))
 
-        self.trace_path(maze, previous_nodes, start_time)
+        self.path = trace_back_path(maze.start_position, maze.end_position, self.previous_nodes)
 
-        print("Dijkstra")
-        print(f"Pathfinding time: {self.pathfinding_time}")
-        print(f"Visited nodes: {self.visited_nodes}")
-        print(f"Path length: {len(self.path)}\n")
+        self.pathfinding_time = round(time.time() - start_time, 5)
+        self.visited_nodes = len(self.previous_nodes)
 
         return
