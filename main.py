@@ -8,34 +8,44 @@ import csv
 
 
 if __name__ == "__main__":
-    # Visualizer(50, 50)
+    print("How do you want to run the program?: ")
+    print("1. Visualizer")
+    print("2. Automated running for data collection")
+    selection = int(input("Select an option: "))
 
-    # Automated running below
-    sizes = [(50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300), (350, 350),
-             (400, 400), (450, 450), (500, 500)]
+    if selection == 1:
+        Visualizer(0, 0)
 
-    with open('data.csv', 'w') as file:
-        fieldnames = ['maze_width', 'maze_height', 'algorithm', 'pathfinding_time', 'visited_nodes', 'path_length']
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-
-    for size in sizes:
-        bfs = BFS()
-        dfs = DFS()
-        dijs = Dijkstra()
-        astar = AStar()
-
-        maze = Maze(size[0], size[1])
-        print(f"Maze size: {size}")
-        bfs.find_path_automated(maze)
-        dfs.find_path_automated(maze)
-        dijs.find_path_automated(maze)
-        astar.find_path_automated(maze)
-
-        with open('data.csv', 'a') as file:
+    elif selection == 2:
+        # Automated running with CSV output
+        with open('data.csv', 'w') as file:
             fieldnames = ['maze_size', 'algorithm', 'pathfinding_time', 'visited_nodes', 'path_length']
-            writer = csv.writer(file, delimiter=',')
-            writer.writerow([size[0], size[1], 'bfs', bfs.pathfinding_time, bfs.visited_nodes, len(bfs.path)])
-            writer.writerow([size[0], size[1], 'dfs', dfs.pathfinding_time, dfs.visited_nodes, len(dfs.path)])
-            writer.writerow([size[0], size[1], 'dijkstra', dijs.pathfinding_time, dijs.visited_nodes, len(dijs.path)])
-            writer.writerow([size[0], size[1], 'astar', astar.pathfinding_time, astar.visited_nodes, len(astar.path)])
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+
+        start: int = int(input("Enter starting maze size: "))
+        step: int = int(input("Enter number of steps: "))
+        end: int = int(input("Enter ending maze size: "))
+
+        for size in range(start, end + 1, step):
+            bfs = BFS()
+            dfs = DFS()
+            dijs = Dijkstra()
+            astar = AStar()
+
+            maze = Maze(size, size)
+            print(f"Maze size: {size}x{size}")
+            bfs.find_path_automated(maze)
+            dfs.find_path_automated(maze)
+            dijs.find_path_automated(maze)
+            astar.find_path_automated(maze)
+
+            with open('data.csv', 'a') as file:
+                fieldnames = ['maze_size', 'algorithm', 'pathfinding_time', 'visited_nodes', 'path_length']
+                writer = csv.writer(file, delimiter=',')
+                writer.writerow([size, 'bfs', bfs.pathfinding_time, bfs.visited_nodes, len(bfs.path)])
+                writer.writerow([size, 'dfs', dfs.pathfinding_time, dfs.visited_nodes, len(dfs.path)])
+                writer.writerow([size, 'dijkstra', dijs.pathfinding_time, dijs.visited_nodes, len(dijs.path)])
+                writer.writerow([size, 'astar', astar.pathfinding_time, astar.visited_nodes, len(astar.path)])
+    else:
+        print("Please select a valid option")

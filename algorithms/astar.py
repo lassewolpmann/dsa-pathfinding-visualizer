@@ -18,6 +18,21 @@ class AStar:
         self.prev = {}
         self.path = []
 
+    def trace_path(self, maze, previous_nodes, start_time):
+        # Trace back path
+        node = maze.end_position
+
+        while node != maze.start_position:
+            self.path.append(node)
+            node = previous_nodes[node]
+
+        self.path.append(maze.start_position)
+
+        self.pathfinding_time = round(time.time() - start_time, 5)
+        self.visited_nodes = len(previous_nodes)
+
+        self.path.reverse()
+
     def find_path(self, visualizer):
         self.pathfinding_time = 0
         start_time = time.time()
@@ -39,18 +54,7 @@ class AStar:
 
             # Reconstruct path when reaching end pos
             if current_node.pos == end_node.pos:
-                node = end_node.pos
-
-                while node != start_node.pos:
-                    self.path.append(node)
-                    node = came_from[node]
-
-                self.path.append(start_node.pos)
-
-                self.pathfinding_time = round(time.time() - start_time, 5)
-                self.visited_nodes = len(came_from)
-
-                self.path.reverse()
+                self.trace_path(visualizer.maze, came_from, start_time)
 
                 return
 
@@ -89,18 +93,7 @@ class AStar:
 
             # Reconstruct path when reaching end pos
             if current_node.pos == end_node.pos:
-                node = end_node.pos
-
-                while node != start_node.pos:
-                    self.path.append(node)
-                    node = came_from[node]
-
-                self.path.append(start_node.pos)
-
-                self.pathfinding_time = round(time.time() - start_time, 5)
-                self.visited_nodes = len(came_from)
-
-                self.path.reverse()
+                self.trace_path(maze, came_from, start_time)
 
                 print("A*")
                 print(f"Pathfinding time: {self.pathfinding_time}")
