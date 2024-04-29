@@ -24,7 +24,7 @@ if __name__ == "__main__":
             writer.writeheader()
 
         start: int = int(input("Enter starting maze size: "))
-        step: int = int(input("Enter number of steps: "))
+        step: int = int(input("Enter step size: "))
         end: int = int(input("Enter ending maze size: "))
 
         for size in range(start, end + 1, step):
@@ -36,17 +36,21 @@ if __name__ == "__main__":
             maze = Maze(size, size)
             print(f"Maze size: {size}x{size}")
 
-            print("BFS")
+            print("BFS...", end="")
             bfs.find_path(maze)
+            print("done")
 
-            print("DFS")
+            print("DFS...", end="")
             dfs.find_path(maze)
+            print("done")
 
-            print("Dijkstra")
+            print("Dijkstra...", end="")
             dijs.find_path(maze)
+            print("done")
 
-            print("A*")
+            print("A*...", end="")
             astar.find_path(maze)
+            print("done")
 
             with open('data.csv', 'a') as file:
                 fieldnames = ['maze_size', 'algorithm', 'pathfinding_time', 'visited_nodes', 'path_length']

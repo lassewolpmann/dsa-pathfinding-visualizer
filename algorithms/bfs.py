@@ -14,11 +14,12 @@ class BFS:
         start_time = time.time()
 
         queue = [(maze.start_position, [maze.start_position])]
+
         # Enqueue the start node and mark it as visited
         self.visited.append(maze.start_position)
 
         while queue:
-            # Dequeue a node and its path
+            # Dequeue a node and its path by removing FIRST item from queue
             current_node, self.path = queue.pop(0)
 
             # If the current node is the end node, return the path
@@ -28,6 +29,7 @@ class BFS:
                 self.visited_nodes = len(self.visited)
 
                 return
+
             # Explore neighbors of the current node
             for neighbor in maze.graph[current_node].neighbors:
                 if neighbor not in self.visited:

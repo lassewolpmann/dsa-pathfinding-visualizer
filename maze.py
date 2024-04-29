@@ -12,8 +12,6 @@ class Maze:
             self.weight = randint(1, 50)
             self.walls = [(0, -1), (1, 0), (0, 1), (-1, 0)]
             self.neighbors = []
-            self.g = sys.maxsize
-            self.f = sys.maxsize    # Basically infinity
 
         def __str__(self):
             return f"Node at {self.pos} with neighbors at {self.neighbors} and walls at {self.walls}"

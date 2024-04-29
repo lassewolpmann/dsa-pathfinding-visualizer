@@ -15,10 +15,15 @@ class Dijkstra:
         self.pathfinding_time = 0
         start_time = time.time()
 
+        # Setting distance to infinity for every node, since we don't have any information yet.
         distances = {node: float('infinity') for node in maze.graph.keys()}
+
+        # Set distance for start position to 0
         distances[maze.start_position] = 0
 
-        pq = [(0, maze.start_position)]
+        # Create priority queue and add start position
+        pq = []
+        heapq.heappush(pq, (0, maze.start_position))
 
         while pq:
             current_distance, current_node = heapq.heappop(pq)

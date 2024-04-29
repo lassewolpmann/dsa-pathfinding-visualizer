@@ -21,7 +21,8 @@ class DFS:
         stack = [(maze.start_position, [maze.start_position])]
 
         while stack:
-            current_node, self.path = stack.pop()  # Pop the last item in the list!
+            # Pop the last item in the list!
+            current_node, self.path = stack.pop()
 
             # Check if the current node is the end node.
             # If yes, update the pathfinding time and return the visited nodes and path.
