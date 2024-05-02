@@ -6,7 +6,7 @@ from algorithms.dijkstra import Dijkstra
 from algorithms.astar import AStar
 from colour import Color
 
-CELL_SIZE = 6
+CELL_SIZE = 8
 WALL_SIZE = 2
 WALL_COLOR = (0, 0, 0)
 PATH_COLOR = (255, 255, 255)
@@ -67,6 +67,7 @@ class Visualizer:
                         self.bfs = BFS()
                         self.dfs = DFS()
                         self.dijkstra = Dijkstra()
+                        self.astar = AStar()
                         self.initial_draw()
 
                     elif self.bfs_button.check_collision(pos):
